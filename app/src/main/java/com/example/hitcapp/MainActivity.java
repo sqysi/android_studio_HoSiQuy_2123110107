@@ -36,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
                 String txtEmail = objEmail.getText().toString();
                 String txtPassword = objPass.getText().toString();
 
-//                if(txtEmail.equals("hosiquy") && txtPassword.equals("3110"))
-//                {
+                if(txtEmail.equals("hosiquy") && txtPassword.equals("3110"))
+                {
                     Intent it = new Intent(getApplicationContext(), HomeActivity.class);
                     startActivity(it);
-//                }
-//                else
-//                {
-//                    Toast.makeText(getApplicationContext(),"LOGIN FAIL", Toast.LENGTH_LONG).show();
-//                }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"LOGIN FAIL", Toast.LENGTH_LONG).show();
+                }
             }
         });
         TextView register = findViewById(R.id.register);
