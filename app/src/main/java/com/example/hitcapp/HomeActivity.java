@@ -1,6 +1,6 @@
 package com.example.hitcapp;
 
-import static com.example.hitcapp.R.id.productRecyclerView;
+
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,59 +26,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
-    RecyclerView productRecyclerView;
-    LinearLayout categoryContainer;
     Button viewCartBtn;
-    @SuppressLint("MissingInflatedId")
+    private RecyclerView categoryRecycler, productRecycler, productRecycler1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        productRecyclerView = findViewById(R.id.productRecyclerView);
-        categoryContainer = findViewById(R.id.categoryContainer);
+        productRecycler = findViewById(R.id.productRecycler);
+        productRecycler1 = findViewById(R.id.productRecycler1);
 
-        setupCategories();
-        setupProducts();
+        categoryRecycler = findViewById(R.id.categoryRecycler);
 
+        List<Category> categoryList = new ArrayList<>();
+        categoryList.add(new Category("All"));
+        categoryList.add(new Category("Footwear"));
+        categoryList.add(new Category("Watch"));
+        categoryList.add(new Category("Chair"));
+
+        CategoryAdapter categoryAdapter = new CategoryAdapter(categoryList);
+        categoryRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        categoryRecycler.setAdapter(new CategoryAdapter(categoryList)); // giả sử bạn đã có adapter
+
+// Thêm khoảng cách giữa các item
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.category_item_spacing); // ví dụ 8dp
+        categoryRecycler.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
+
+        List<Product> productList = new ArrayList<>();
+        productList.add(new Product("Nike Shoes", "$12.00", R.drawable.pro1));
+        productList.add(new Product("Chair", "$10.00", R.drawable.pro2));
+        productList.add(new Product("Adidas Shoes", "$15.00", R.drawable.pro3));
+        productList.add(new Product("Gaming Chair", "$40.00", R.drawable.pro4));
+
+        ProductAdapter productAdapter = new ProductAdapter(productList);
+        productRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        productRecycler.setAdapter(new ProductAdapter(productList));
+
+        productRecycler1.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        productRecycler1.setAdapter(new ProductAdapter(productList));
+
+        // Bottom Navigation
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
             if (id == R.id.nav_home) {
                 return true;
+            } else if (id == R.id.nav_search) {
+                Toast.makeText(this, "Favorite chưa hoạt động", Toast.LENGTH_SHORT).show();
+                return true;
             } else if (id == R.id.nav_cart) {
-                startActivity(new Intent(HomeActivity.this, CartActivity.class));
+                Toast.makeText(this, "Cart chưa hoạt động", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.nav_profile) {
+                Toast.makeText(this, "Profile chưa hoạt động", Toast.LENGTH_SHORT).show();
                 return true;
             }
-
             return false;
         });
-    }
-
-
-    private void setupCategories() {
-        String[] categories = {"Violin", "Guitar", "Saxophone"};
-        for (String cat : categories) {
-            Button btn = new Button(this);
-            btn.setText(cat);
-            btn.setBackgroundResource(R.drawable.category_button_bg);
-            categoryContainer.addView(btn);
-        }
-    }
-
-    private void setupProducts() {
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("Guitar 1", "$132.00", R.drawable.pro1));
-        products.add(new Product("Violin 1", "$1100.00", R.drawable.pro2));
-        products.add(new Product("Guitar 3", "$1100.00", R.drawable.pro3));
-        products.add(new Product("Guitar 4", "$1100.00", R.drawable.pro4));
-        products.add(new Product("Guitar 4", "$1100.00", R.drawable.pro5));
-        products.add(new Product("Guitar 4", "$1100.00", R.drawable.pro1));
-
-
-        ProductAdapter adapter = new ProductAdapter(products);
-        productRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        productRecyclerView.setAdapter(adapter);
     }
 }
