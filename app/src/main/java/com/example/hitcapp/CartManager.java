@@ -13,8 +13,4 @@ public class CartManager {
     public static List<Product> getCart() {
         return cart;
     }
-
-    public static void clearCart() {
-        cart.clear();
-    }
 }

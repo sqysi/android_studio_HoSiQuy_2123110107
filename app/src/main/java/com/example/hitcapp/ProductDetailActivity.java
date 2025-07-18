@@ -1,16 +1,15 @@
 package com.example.hitcapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.bumptech.glide.Glide;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 
 public class ProductDetailActivity extends AppCompatActivity {
-
     ImageView productImage;
     TextView productName, productPrice;
     Button addToCartBtn;
@@ -28,15 +27,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String price = intent.getStringExtra("price");
-        int imageRes = intent.getIntExtra("imageRes", 0);
+        String image = intent.getStringExtra("imageUrl");
 
-        productImage.setImageResource(imageRes);
         productName.setText(name);
         productPrice.setText(price);
+        Glide.with(this).load(image).into(productImage);
 
         addToCartBtn.setOnClickListener(v -> {
-            CartManager.addProduct(new Product(name, price, imageRes));
-            Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show();
+            CartManager.addProduct(new Product(name, price, image));
+            Toast.makeText(this, "Đã thêm vào giỏ", Toast.LENGTH_SHORT).show();
         });
     }
 }

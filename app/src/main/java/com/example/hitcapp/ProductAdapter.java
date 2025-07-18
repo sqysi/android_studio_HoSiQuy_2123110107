@@ -1,48 +1,69 @@
 package com.example.hitcapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
-    private List<Product> products;
+    private List<Product> productList;
+    private Context context;
 
-    public ProductAdapter(List<Product> products) {
-        this.products = products;
+    public ProductAdapter(List<Product> productList, Context context) {
+        this.productList = productList;
+        this.context = context;
     }
 
+    @NonNull
     @Override
-    public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_item_product, parent, false);
         return new ProductViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ProductViewHolder holder, int position) {
-        Product p = products.get(position);
-        holder.productName.setText(p.getName());
-        holder.productPrice.setText(p.getPrice());
-        holder.productImage.setImageResource(p.getImageResId());
+    public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
+        Product product = productList.get(position);
+        holder.name.setText(product.getName());
+        holder.price.setText(product.getPrice());
+
+        Glide.with(context)
+                .load(product.getImageUrl())
+                .into(holder.image);
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra("name", product.getName());
+            intent.putExtra("price", product.getPrice());
+            intent.putExtra("imageUrl", product.getImageUrl());
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return productList.size();
     }
 
-    static class ProductViewHolder extends RecyclerView.ViewHolder {
-        TextView productName, productPrice;
-        ImageView productImage;
+    public static class ProductViewHolder extends RecyclerView.ViewHolder {
+        ImageView image;
+        TextView name, price;
 
-        public ProductViewHolder(View itemView) {
+        public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            productName = itemView.findViewById(R.id.productName);
-            productPrice = itemView.findViewById(R.id.productPrice);
-            productImage = itemView.findViewById(R.id.productImage);
+            image = itemView.findViewById(R.id.productImage);
+            name = itemView.findViewById(R.id.productTitle);
+            price = itemView.findViewById(R.id.productPrice);
         }
     }
 }
