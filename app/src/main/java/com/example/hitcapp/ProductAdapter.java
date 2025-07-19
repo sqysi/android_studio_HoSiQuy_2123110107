@@ -36,6 +36,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         Product product = productList.get(position);
         holder.name.setText(product.getName());
         holder.price.setText(product.getPrice());
+//        holder.description.setText(product.getDescription());
+
 
         Glide.with(context)
                 .load(product.getImageUrl())
@@ -45,6 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             Intent intent = new Intent(context, ProductDetailActivity.class);
             intent.putExtra("name", product.getName());
             intent.putExtra("price", product.getPrice());
+            intent.putExtra("description", product.getDescription());
             intent.putExtra("imageUrl", product.getImageUrl());
             context.startActivity(intent);
         });
@@ -57,13 +60,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
-        TextView name, price;
+        TextView name, price, description;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             image = itemView.findViewById(R.id.productImage);
             name = itemView.findViewById(R.id.productTitle);
             price = itemView.findViewById(R.id.productPrice);
+
         }
     }
 }

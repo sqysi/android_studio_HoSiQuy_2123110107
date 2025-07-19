@@ -26,7 +26,7 @@
             android:layout_marginTop="16dp" />
 
         <TextView
-            android:id="@+id/textDetailPrice"
+            android:id="@+id/detailProductPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Giá sản phẩm"
@@ -35,7 +35,7 @@
             android:layout_marginTop="8dp" />
 
         <TextView
-            android:id="@+id/detailProductPrice"
+            android:id="@+id/detailProductDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mô tả sản phẩm..."

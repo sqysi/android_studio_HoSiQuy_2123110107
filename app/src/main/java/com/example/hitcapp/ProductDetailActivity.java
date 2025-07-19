@@ -11,7 +11,7 @@ import android.content.Intent;
 
 public class ProductDetailActivity extends AppCompatActivity {
     ImageView productImage;
-    TextView productName, productPrice;
+    TextView productName, productPrice, productDescription;
     Button addToCartBtn;
 
     @Override
@@ -19,22 +19,32 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
+        // Ánh xạ view
         productImage = findViewById(R.id.detailProductImage);
         productName = findViewById(R.id.detailProductName);
         productPrice = findViewById(R.id.detailProductPrice);
+        productDescription = findViewById(R.id.detailProductDescription);
         addToCartBtn = findViewById(R.id.addToCartBtn);
 
+        // Nhận dữ liệu từ Intent
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         String price = intent.getStringExtra("price");
         String image = intent.getStringExtra("imageUrl");
+        String description = intent.getStringExtra("description");
+        double rate = intent.getDoubleExtra("rate", 0.0);
+        double priceValue = intent.getDoubleExtra("priceValue", 0.0);
 
+        // Hiển thị dữ liệu lên giao diện
         productName.setText(name);
         productPrice.setText(price);
+        productDescription.setText(description);
         Glide.with(this).load(image).into(productImage);
 
+        // Thêm vào giỏ hàng khi click
         addToCartBtn.setOnClickListener(v -> {
-            CartManager.addProduct(new Product(name, price, image));
+            Product product = new Product(name, price, image, description, rate, priceValue);
+            CartManager.addProduct(product);
             Toast.makeText(this, "Đã thêm vào giỏ", Toast.LENGTH_SHORT).show();
         });
     }

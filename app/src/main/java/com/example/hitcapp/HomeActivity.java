@@ -19,18 +19,36 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
-    private RecyclerView productRecycler, productRecycler1;
+    private RecyclerView productRecycler, productRecycler1, categoryRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        categoryRecycler = findViewById(R.id.categoryRecycler);
         productRecycler = findViewById(R.id.productRecycler);
         productRecycler1 = findViewById(R.id.productRecycler1);
+
+        // Setup category
+        List<Category> categoryList = new ArrayList<>();
+        categoryList.add(new Category("All"));
+        categoryList.add(new Category("Footwear"));
+        categoryList.add(new Category("Watch"));
+        categoryList.add(new Category("Chair"));
+
+        CategoryAdapter categoryAdapter = new CategoryAdapter(categoryList);
+        categoryRecycler.setAdapter(categoryAdapter);
+        categoryRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        // Thêm khoảng cách giữa các item
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.category_item_spacing); // ví dụ 8dp
+        categoryRecycler.addItemDecoration(new SpacesItemDecoration(spacingInPixels));
 
         fetchProductsFromApi();
 
@@ -63,20 +81,32 @@ public class HomeActivity extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject obj = response.getJSONObject(i);
                             String name = obj.getString("title");
-                            String price = "$" + obj.getString("price");
+                            double priceValue = obj.getDouble("price");
+                            String price = "$" + priceValue;
                             String imageUrl = obj.getString("image");
                             String description = obj.getString("description");
 
-                            Product product = new Product(name, price, imageUrl);
+                            // Lấy rate
+                            JSONObject ratingObj = obj.getJSONObject("rating");
+                            double rate = ratingObj.getDouble("rate");
+
+                            Product product = new Product(name, price, imageUrl, description, rate, priceValue);
                             productList.add(product);
                         }
 
-                        ProductAdapter productAdapter = new ProductAdapter(productList, this);
+                        // Sắp xếp sản phẩm nổi bật theo rate giảm dần
+                        List<Product> featuredProducts = new ArrayList<>(productList);
+                        Collections.sort(featuredProducts, (a, b) -> Double.compare(b.getRate(), a.getRate()));
+                        ProductAdapter featuredAdapter = new ProductAdapter(featuredProducts, this);
                         productRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-                        productRecycler.setAdapter(productAdapter);
+                        productRecycler.setAdapter(featuredAdapter);
 
+                        // Sắp xếp sản phẩm giảm giá theo giá tăng dần
+                        List<Product> discountProducts = new ArrayList<>(productList);
+                        Collections.sort(discountProducts, Comparator.comparingDouble(Product::getPriceValue));
+                        ProductAdapter discountAdapter = new ProductAdapter(discountProducts, this);
                         productRecycler1.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-                        productRecycler1.setAdapter(productAdapter);
+                        productRecycler1.setAdapter(discountAdapter);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
